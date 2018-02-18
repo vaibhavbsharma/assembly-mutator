@@ -37,7 +37,7 @@ while(1) {
 	    if($mutated == 0 && is_flag_use($_) && is_past_mutation(("$line_num: " . $curr_insn)) == 0) {
 		$new_insn_0 = mutate($_, 0);
 		$new_insn_1 = mutate($_, 1);
-		print "new_insn_0 = $new_insn_0, new_insn_1 = $new_insn_1";
+		if($debug) { print "new_insn_0 = $new_insn_0, new_insn_1 = $new_insn_1"; }
 		push @past_mutations, ("$line_num: " . $curr_insn);
 		$mutant_1_name = $binary . "#" . $line_num . ".0.s";
 		$mutant_2_name = $binary . "#" . $line_num . ".1.s";
