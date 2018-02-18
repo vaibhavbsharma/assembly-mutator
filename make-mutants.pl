@@ -16,6 +16,7 @@ if($length == 2) {
 }
 my @past_mutations = ();
 `mkdir $binary-mutants`;
+print "debug = $debug\n";
 while(1) {
     open(F, $binary) or die;
     my $curr_fn_name = "";
@@ -25,10 +26,11 @@ while(1) {
     my $mutated = 0;
     while (<F>) {
 	$line_num += 1;
-	if(/^[_a-zA-Z0-9.]+:$/ && !/^\..*/) {
-	    # print "$_";
+	# if($debug == 1) { print $_; }
+	if(/^[_a-zA-Z0-9\.]+:/ && !/^\./) {
 	    $curr_fn_name = $_;
 	    chomp($curr_fn_name);
+	    if ($debug == 1) { print "curr_fn_name = $curr_fn_name\n"; }
 	}
 	my ($new_insn_0, $new_insn_1) = ($_, $_);
 	if($fn_name eq "" || ($curr_fn_name =~ /$fn_name/)) {
@@ -37,7 +39,7 @@ while(1) {
 	    if($mutated == 0 && is_flag_use($_) && is_past_mutation(("$line_num: " . $curr_insn)) == 0) {
 		$new_insn_0 = mutate($_, 0);
 		$new_insn_1 = mutate($_, 1);
-		if($debug) { print "new_insn_0 = $new_insn_0, new_insn_1 = $new_insn_1"; }
+		if($debug == 1) { print "new_insn_0 = $new_insn_0, new_insn_1 = $new_insn_1"; }
 		push @past_mutations, ("$line_num: " . $curr_insn);
 		$mutant_1_name = $binary . "#" . $line_num . ".0.s";
 		$mutant_2_name = $binary . "#" . $line_num . ".1.s";
@@ -62,8 +64,10 @@ while(1) {
 sub is_past_mutation {
     my ($curr_insn) = (@_);
     foreach my $past_mut_str (@past_mutations) {
-	# print "past_mut_str = $past_mut_str, curr_insn = $curr_insn, " .
-	#     ($past_mut_str eq $curr_insn) . "\n";
+	if($debug == 1) {
+	    print "past_mut_str = $past_mut_str, curr_insn = $curr_insn, " .
+		($past_mut_str eq $curr_insn) . "\n";
+	}
 	if ($past_mut_str eq $curr_insn) {
 	    return 1;
 	}
