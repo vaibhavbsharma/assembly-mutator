@@ -17,6 +17,7 @@ if($length == 2) {
 my @past_mutations = ();
 `mkdir $binary-mutants`;
 print "debug = $debug\n";
+my $mutant_num = 0;
 while(1) {
     open(F, $binary) or die;
     my $curr_fn_name = "";
@@ -30,6 +31,7 @@ while(1) {
 	if(/^[_a-zA-Z0-9\.]+:/ && !/^\./) {
 	    $curr_fn_name = $_;
 	    chomp($curr_fn_name);
+	    $curr_fn_name = substr($curr_fn_name, 0, index($curr_fn_name, ':'));
 	    if ($debug == 1) { print "curr_fn_name = $curr_fn_name\n"; }
 	}
 	my ($new_insn_0, $new_insn_1) = ($_, $_);
@@ -41,9 +43,10 @@ while(1) {
 		$new_insn_1 = mutate($_, 1);
 		if($debug == 1) { print "new_insn_0 = $new_insn_0, new_insn_1 = $new_insn_1"; }
 		push @past_mutations, ("$line_num: " . $curr_insn);
-		$mutant_1_name = $binary . "#" . $line_num . ".0.s";
-		$mutant_2_name = $binary . "#" . $line_num . ".1.s";
+		$mutant_1_name = $curr_fn_name. "#" . $mutant_num. ".0.s";
+		$mutant_2_name = $curr_fn_name. "#" . $mutant_num . ".1.s";
 		$mutated = 1;
+		$mutant_num++;
 	    }
 	}
 	$mutant_1_assembly .= $new_insn_0;
